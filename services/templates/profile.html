@@ -1,0 +1,218 @@
+
+{% extends 'base.html' %}
+
+{% block title %}@{{ profile_user.username }} — Ainks{% endblock %}
+
+{% block content %}
+
+<style>
+    .public-profile {
+        max-width: 620px;
+        margin: 20px auto;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 20px;
+        display: grid;
+        place-items: center;
+        border-radius: 32px;
+        background: linear-gradient(135deg, #ff8a42, #f04438, #ed354d);
+        color: white;
+        font-size: 42px;
+        font-weight: 800;
+        box-shadow: 0 12px 35px rgba(240, 68, 56, .22);
+    }
+
+    .public-profile h1 {
+        font-size: 30px;
+        margin: 0 0 8px;
+        color: #202027;
+    }
+
+    .profile-description {
+        color: #888891;
+        margin-bottom: 30px;
+    }
+
+    .public-links {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-top: 30px;
+    }
+
+    .public-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 19px 22px;
+        background: white;
+        border: 1px solid #eeeeef;
+        border-radius: 16px;
+        text-align: left;
+        text-decoration: none;
+        transition: .25s;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, .025);
+    }
+
+    .public-link:hover {
+        transform: translateY(-3px);
+        border-color: #ffad91;
+        box-shadow: 0 10px 28px rgba(240, 68, 56, .09);
+    }
+
+    .public-link-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        min-width: 0;
+    }
+
+    .public-link-icon {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        background: #fff3ee;
+        overflow: hidden;
+    }
+
+    .public-link-icon img {
+        width: 26px;
+        height: 26px;
+        object-fit: contain;
+    }
+
+    .public-link-info {
+        min-width: 0;
+    }
+
+    .public-link-title {
+        font-weight: 800;
+        color: #25252d;
+        font-size: 15px;
+    }
+
+    .public-link-url {
+        display: block;
+        margin-top: 5px;
+        color: #9999a0;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+    }
+
+    .public-link-arrow {
+        color: #f04438;
+        font-size: 22px;
+        margin-left: 10px;
+        flex-shrink: 0;
+    }
+
+    .empty-profile {
+        padding: 35px 20px;
+        background: white;
+        border: 1px solid #eeeeef;
+        border-radius: 18px;
+        color: #888891;
+    }
+
+    .profile-brand {
+        margin-top: 35px;
+        color: #aaa;
+        font-size: 12px;
+    }
+
+    @media (max-width: 480px) {
+        .public-profile h1 {
+            font-size: 25px;
+        }
+
+        .public-link {
+            padding: 15px;
+        }
+
+        .public-link-icon {
+            width: 40px;
+            height: 40px;
+        }
+    }
+</style>
+
+<div class="public-profile">
+
+    <div class="profile-avatar">
+        {{ profile_user.username|first|upper }}
+    </div>
+
+    <h1>@{{ profile_user.username }}</h1>
+
+    <p class="profile-description">
+        Мои ссылки в одном месте
+    </p>
+
+    <div class="public-links">
+
+        {% for link in links %}
+
+            <a href="{{ link.original_url }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="public-link">
+
+                <div class="public-link-left">
+
+                    <div class="public-link-icon">
+
+                        {% if link.favicon_url %}
+                            <img
+                                src="{{ link.favicon_url }}"
+                                alt="Иконка сайта"
+                                onerror="this.style.display='none'; this.parentElement.innerHTML='🌐';"
+                            >
+                        {% else %}
+                            <span>🌐</span>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="public-link-info">
+
+                        <div class="public-link-title">
+                            {{ link.title }}
+                        </div>
+
+                        <span class="public-link-url">
+                            {{ link.original_url }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <span class="public-link-arrow">↗</span>
+
+            </a>
+
+        {% empty %}
+
+            <div class="empty-profile">
+                Пользователь пока не добавил ссылки.
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+    <div class="profile-brand">
+        Создано с помощью Ainks
+    </div>
+
+</div>
+
+{% endblock %}

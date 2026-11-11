@@ -1,0 +1,534 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Ainks — сокращай ссылки{% endblock %}
+
+{% block extra_head %}
+<style>
+    .hero {
+        text-align: center;
+        padding: 35px 0 55px;
+        position: relative;
+    }
+
+    .hero-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 15px;
+        border: 1px solid #ffe1d5;
+        border-radius: 50px;
+        background: rgba(255,255,255,.8);
+        color: #ef6847;
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 25px;
+    }
+
+    .hero-label span {
+        width: 7px;
+        height: 7px;
+        background: #ff7144;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #ff7144;
+    }
+
+    .hero h1 {
+        font-family: 'Manrope', sans-serif;
+        font-size: clamp(38px, 6vw, 66px);
+        line-height: 1.12;
+        letter-spacing: -3px;
+        font-weight: 800;
+        max-width: 750px;
+        margin: 0 auto 20px;
+    }
+
+    .hero h1 span {
+        background: var(--gradient);
+        color: transparent;
+        background-clip: text;
+        -webkit-background-clip: text;
+    }
+
+    .hero p {
+        max-width: 510px;
+        margin: auto;
+        color: #85858e;
+        font-size: 15px;
+        line-height: 1.8;
+    }
+
+    .create-card {
+        max-width: 720px;
+        margin: 0 auto 65px;
+        position: relative;
+    }
+
+    .create-card::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        inset: 15px 35px -10px;
+        background: linear-gradient(120deg, #ff9a64, #ff4d55);
+        filter: blur(50px);
+        opacity: .14;
+        border-radius: 50%;
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 22px;
+    }
+
+    .section-heading h2 {
+        font-family: 'Manrope', sans-serif;
+        font-size: 22px;
+        letter-spacing: -.7px;
+    }
+
+    .section-heading p {
+        color: #999;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .create-card .primary-button {
+        width: 100%;
+        margin-top: 4px;
+    }
+
+    .preview {
+        display: none;
+        align-items: center;
+        gap: 13px;
+        padding: 14px;
+        margin: 18px 0;
+        background: #fff8f4;
+        border: 1px solid #ffe8de;
+        border-radius: 13px;
+    }
+
+    .preview-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: white;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+    }
+
+    .preview-icon img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .preview-info strong {
+        display: block;
+        font-size: 13px;
+    }
+
+    .preview-info span {
+        display: block;
+        color: #999;
+        font-size: 11px;
+        margin-top: 3px;
+    }
+
+    .links-section {
+        margin-top: 20px;
+    }
+
+    .links-section .section-heading {
+        margin-bottom: 20px;
+    }
+
+    .link-count {
+        padding: 7px 12px;
+        background: #fff0e9;
+        color: #ec6744;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .link-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .link-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 18px 20px;
+        background: white;
+        border: 1px solid #eeeeef;
+        border-radius: 16px;
+        transition: .2s;
+    }
+
+    .link-item:hover {
+        border-color: #ffd0bf;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(30,30,40,.035);
+    }
+
+    .link-icon {
+        width: 43px;
+        height: 43px;
+        border-radius: 13px;
+        background: #fff4ee;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .link-icon img {
+        width: 25px;
+        height: 25px;
+    }
+
+    .link-details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .link-details h3 {
+        font-size: 14px;
+        font-weight: 800;
+        margin-bottom: 5px;
+    }
+
+    .link-original {
+        color: #999;
+        font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 400px;
+    }
+
+    .link-short {
+        display: inline-block;
+        margin-top: 7px;
+        color: #f05b42;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .link-stats {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #999;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .delete-form {
+        margin-left: 5px;
+    }
+
+    .delete-button {
+        width: 34px;
+        height: 34px;
+        border: 1px solid #f0eeee;
+        border-radius: 10px;
+        background: white;
+        color: #aaa;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .delete-button:hover {
+        background: #fff0ed;
+        color: #e44d40;
+        border-color: #ffd2ca;
+    }
+
+    .empty-state {
+        padding: 55px 20px;
+        text-align: center;
+        background: white;
+        border: 1px dashed #e8e8eb;
+        border-radius: 18px;
+    }
+
+    .empty-icon {
+        font-size: 35px;
+        margin-bottom: 15px;
+    }
+
+    .empty-state h3 {
+        font-size: 17px;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        color: #999;
+        font-size: 13px;
+    }
+
+    .guest-card {
+        max-width: 650px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .guest-card h2 {
+        font-size: 23px;
+        margin-bottom: 12px;
+    }
+
+    .guest-card p {
+        color: #888;
+        line-height: 1.7;
+        font-size: 14px;
+        margin-bottom: 23px;
+    }
+
+    .guest-actions {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    @media(max-width: 650px) {
+        .hero {
+            padding-top: 15px;
+        }
+
+        .hero h1 {
+            letter-spacing: -1.7px;
+        }
+
+        .link-item {
+            gap: 10px;
+            padding: 14px;
+        }
+
+        .link-stats {
+            display: none;
+        }
+
+        .link-original {
+            max-width: 180px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <div class="hero-label">
+        <span></span>
+        ТВОЙ ПРОСТРАНСТВО ДЛЯ ССЫЛОК
+    </div>
+
+    <h1>
+        Длинные ссылки.<br>
+        <span>Короткие решения.</span>
+    </h1>
+
+    <p>
+        Превращай длинные адреса в короткие ссылки.
+        Создавай, сохраняй и управляй ими в одном месте.
+    </p>
+</section>
+
+{% if user.is_authenticated %}
+
+<section class="card create-card">
+
+    <div class="section-heading">
+        <div>
+            <h2>Создать ссылку</h2>
+            <p>Добавь адрес, и Ainks сделает его короче.</p>
+        </div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Название ссылки</label>
+            {{ form.title }}
+            {{ form.title.errors }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.original_url.id_for_label }}">Исходный адрес</label>
+            {{ form.original_url }}
+            {{ form.original_url.errors }}
+        </div>
+
+        <div class="preview" id="preview">
+            <div class="preview-icon">
+                <img id="favicon" src="" alt="">
+            </div>
+            <div class="preview-info">
+                <strong id="site-name">Сайт</strong>
+                <span id="site-domain"></span>
+            </div>
+        </div>
+
+        <button type="submit" class="primary-button">
+            ✦ Создать короткую ссылку
+        </button>
+    </form>
+</section>
+
+<section class="links-section">
+
+    <div class="section-heading">
+        <div>
+            <h2>Мои ссылки</h2>
+            <p>Все созданные тобой ссылки.</p>
+        </div>
+
+        <span class="link-count">{{ links|length }} ссылок</span>
+    </div>
+
+    {% if links %}
+        <div class="link-list">
+
+            {% for link in links %}
+                <article class="link-item">
+
+                    <div class="link-icon">
+                        <img
+                            src="{{ link.favicon_url }}"
+                            alt=""
+                            onerror="this.style.display='none'"
+                        >
+                    </div>
+
+                    <div class="link-details">
+                        <h3>{{ link.title }}</h3>
+
+                        <div class="link-original">
+                            {{ link.original_url }}
+                        </div>
+
+                        <a
+                            href="{% url 'short_redirect' link.short_code %}"
+                            class="link-short"
+                            target="_blank"
+                        >
+                            {{ request.get_host }}/{{
+                                link.short_code
+                            }}
+                        </a>
+                    </div>
+
+                    <div class="link-stats">
+                        ↗ {{ link.clicks }} переходов
+                    </div>
+
+                    <form
+                        method="POST"
+                        action="{% url 'delete_link' link.id %}"
+                        class="delete-form"
+                    >
+                        {% csrf_token %}
+                        <button
+                            type="submit"
+                            class="delete-button"
+                            title="Удалить ссылку"
+                            onclick="return confirm('Удалить эту ссылку?')"
+                        >
+                            ✕
+                        </button>
+                    </form>
+
+                </article>
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+            <div class="empty-icon">↗</div>
+            <h3>Пока здесь пусто</h3>
+            <p>Создай свою первую короткую ссылку выше.</p>
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% else %}
+
+<section class="card guest-card">
+    <h2>Начни пользоваться Ainks</h2>
+    <p>
+        Создавай короткие ссылки, сохраняй их в личном кабинете
+        и следи за количеством переходов.
+    </p>
+
+    <div class="guest-actions">
+        <a href="{% url 'register' %}" class="primary-button">
+            Создать аккаунт
+        </a>
+
+        <a href="{% url 'login' %}" class="secondary-button">
+            Уже есть аккаунт?
+        </a>
+    </div>
+</section>
+
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const urlInput = document.querySelector(
+        'input[name="original_url"]'
+    );
+
+    const preview = document.getElementById('preview');
+    const favicon = document.getElementById('favicon');
+    const siteName = document.getElementById('site-name');
+    const siteDomain = document.getElementById('site-domain');
+
+    if (urlInput) {
+        urlInput.addEventListener('input', function () {
+            let value = this.value.trim();
+
+            try {
+                if (!/^https?:\/\//i.test(value)) {
+                    value = 'https://' + value;
+                }
+
+                const parsed = new URL(value);
+
+                if (!['http:', 'https:'].includes(parsed.protocol)) {
+                    preview.style.display = 'none';
+                    return;
+                }
+
+                preview.style.display = 'flex';
+                siteName.textContent = parsed.hostname;
+                siteDomain.textContent = parsed.href;
+
+                favicon.src =
+                    'https://www.google.com/s2/favicons?domain=' +
+                    encodeURIComponent(parsed.hostname) +
+                    '&sz=64';
+
+            } catch (error) {
+                preview.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

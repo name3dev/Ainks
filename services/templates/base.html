@@ -1,0 +1,521 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>{% block title %}Ainks — сокращай красиво{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --orange: #ff7138;
+            --red: #f04438;
+            --dark: #202027;
+            --muted: #888891;
+            --background: #fafafa;
+            --border: #eeeeef;
+            --gradient: linear-gradient(120deg, #ff8a42, #ff563d 55%, #ed354d);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--dark);
+            font-family: 'DM Sans', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            z-index: -1;
+            pointer-events: none;
+            border-radius: 50%;
+            filter: blur(95px);
+            opacity: .20;
+        }
+
+        body::before {
+            width: 420px;
+            height: 350px;
+            background: #ff9a62;
+            top: -170px;
+            right: -130px;
+        }
+
+        body::after {
+            width: 380px;
+            height: 340px;
+            background: #ff5366;
+            bottom: -180px;
+            left: -150px;
+            opacity: .12;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .header {
+            width: 100%;
+            height: 82px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7%;
+            background: rgba(255,255,255,.82);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,.045);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Manrope', sans-serif;
+            font-size: 27px;
+            font-weight: 800;
+            letter-spacing: -1.8px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .logo-mark {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--gradient);
+            color: white;
+            font-size: 19px;
+            box-shadow: 0 5px 18px rgba(244,78,58,.25);
+        }
+
+        .logo span:last-child {
+            background: var(--gradient);
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 27px;
+        }
+
+        .nav-link {
+            color: #66666f;
+            font-size: 14px;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        .nav-link:hover {
+            color: var(--red);
+        }
+
+        .nav-user {
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .nav-button {
+            padding: 11px 20px;
+            border-radius: 12px;
+            color: white;
+            background: var(--gradient);
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 6px 18px rgba(241,77,58,.19);
+            transition: .25s;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 9px 25px rgba(241,77,58,.28);
+        }
+
+        .logout-form {
+            display: inline;
+        }
+
+        .logout-button {
+            background: none;
+            border: none;
+            color: #777;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .logout-button:hover {
+            color: var(--red);
+        }
+
+        .container {
+            width: min(1120px, 86%);
+            margin: 0 auto;
+        }
+
+        .page-content {
+            min-height: calc(100vh - 150px);
+            padding: 65px 0 90px;
+        }
+
+        .primary-button {
+            position: relative;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 9px;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 13px;
+            background:
+                radial-gradient(ellipse at 15% 20%, rgba(255,255,255,.35), transparent 40%),
+                radial-gradient(ellipse at 85% 80%, rgba(255,180,90,.45), transparent 35%),
+                var(--gradient);
+            color: white;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(241,75,57,.24);
+            transition: .25s;
+            isolation: isolate;
+        }
+
+        .primary-button::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            inset: -9px;
+            border-radius: 35% 65% 50% 40%;
+            background: linear-gradient(120deg, #ff8a42, #f04455);
+            filter: blur(19px);
+            opacity: .35;
+            transition: .25s;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(241,75,57,.30);
+        }
+
+        .primary-button:hover::before {
+            opacity: .65;
+            filter: blur(23px);
+        }
+
+        .secondary-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 13px 21px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .secondary-button:hover {
+            border-color: #ffb29b;
+            color: var(--red);
+        }
+
+        .card {
+            background: rgba(255,255,255,.92);
+            border: 1px solid rgba(0,0,0,.055);
+            border-radius: 22px;
+            padding: 28px;
+            box-shadow: 0 12px 40px rgba(30,30,40,.035);
+        }
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 9px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #45454e;
+        }
+
+        .form-input,
+        .auth-form input {
+            width: 100%;
+            padding: 15px 16px;
+            border: 1px solid #e9e9ed;
+            border-radius: 12px;
+            outline: none;
+            background: #fff;
+            color: var(--dark);
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .form-input:focus,
+        .auth-form input:focus {
+            border-color: #ff9a76;
+            box-shadow: 0 0 0 4px rgba(255,110,70,.09);
+        }
+
+        .form-input::placeholder {
+            color: #b6b6bd;
+        }
+
+        .messages {
+            margin-bottom: 25px;
+        }
+
+        .message {
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: #fff0e9;
+            color: #c84c30;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .errorlist {
+            color: #e34b42;
+            font-size: 12px;
+            list-style: none;
+            margin-top: 7px;
+        }
+
+        .footer {
+            padding: 27px 7%;
+            border-top: 1px solid rgba(0,0,0,.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #9999a0;
+            font-size: 12px;
+        }
+
+        .footer strong {
+            color: #55555e;
+        }
+
+        /* AUTH */
+
+        .auth-wrapper {
+            min-height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 440px;
+            padding: 38px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 23px;
+            box-shadow: 0 20px 65px rgba(30,30,40,.06);
+        }
+
+        .auth-card h1 {
+            font-family: 'Manrope', sans-serif;
+            font-size: 29px;
+            letter-spacing: -1px;
+            margin-bottom: 9px;
+        }
+
+        .auth-card > p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 27px;
+        }
+
+        .auth-form p {
+            margin-bottom: 17px;
+        }
+
+        .auth-form label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .auth-form .helptext {
+            display: block;
+            color: #999;
+            font-size: 11px;
+            margin-top: 7px;
+        }
+
+        .auth-form ul {
+            margin-left: 0;
+            padding-left: 0;
+        }
+
+        .auth-form .primary-button {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .auth-switch a {
+            color: var(--red);
+            font-weight: 800;
+        }
+
+        @media (max-width: 700px) {
+            .header {
+                height: 70px;
+                padding: 0 5%;
+            }
+
+            .logo {
+                font-size: 23px;
+            }
+
+            .nav {
+                gap: 12px;
+            }
+
+            .nav-link {
+                font-size: 12px;
+            }
+
+            .nav-button {
+                padding: 9px 12px;
+                font-size: 12px;
+            }
+
+            .container {
+                width: 90%;
+            }
+
+            .page-content {
+                padding: 40px 0 65px;
+            }
+
+            .card {
+                padding: 21px;
+            }
+
+            .footer {
+                padding: 23px 5%;
+                gap: 10px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .auth-card {
+                padding: 27px 22px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .nav {
+                gap: 9px;
+            }
+
+            .nav-link {
+                font-size: 11px;
+            }
+
+            .nav-button {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+<header class="header">
+    <a href="{% url 'home' %}" class="logo">
+        <span class="logo-mark">A</span>
+        <span>Ainks</span>
+    </a>
+
+    <nav class="nav">
+        <a href="{% url 'home' %}" class="nav-link">Главная</a>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile' user.username %}" class="nav-link nav-user">
+                @{{ user.username }}
+            </a>
+
+            <form method="POST" action="{% url 'logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">Выйти</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}" class="nav-link">Войти</a>
+            <a href="{% url 'register' %}" class="nav-button">Создать аккаунт</a>
+        {% endif %}
+    </nav>
+</header>
+
+<main class="page-content">
+    <div class="container">
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+
+    </div>
+</main>
+
+<footer class="footer">
+    <div>© 2026 <strong>Ainks</strong>. Все права защищены.</div>
+    <div>Меньше символов. Больше возможностей.</div>
+</footer>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>
