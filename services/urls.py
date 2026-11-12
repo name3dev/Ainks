@@ -1,6 +1,8 @@
+
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -21,9 +23,28 @@ urlpatterns = [
         name='logout'
     ),
 
-    path('@<str:username>/', views.profile, name='profile'),
+    path(
+        'edit/<int:link_id>/',
+        views.edit_link,
+        name='edit_link'
+    ),
 
-    path('delete/<int:link_id>/', views.delete_link, name='delete_link'),
+    path(
+        'delete/<int:link_id>/',
+        views.delete_link,
+        name='delete_link'
+    ),
 
-    path('<str:code>/', views.short_redirect, name='short_redirect'),
+    path(
+        '@<str:username>/',
+        views.profile,
+        name='profile'
+    ),
+
+    # Короткий код должен оставаться последним маршрутом!
+    path(
+        '<str:code>/',
+        views.short_redirect,
+        name='short_redirect'
+    ),
 ]

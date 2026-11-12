@@ -1,0 +1,172 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Редактирование ссылки — Ainks{% endblock %}
+
+{% block content %}
+
+<style>
+    .edit-wrapper {
+        max-width: 600px;
+        margin: 45px auto;
+    }
+
+    .edit-card {
+        background: white;
+        border: 1px solid #eeeeef;
+        border-radius: 22px;
+        padding: 32px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, .035);
+    }
+
+    .edit-card h1 {
+        color: #25252d;
+        font-size: 27px;
+        margin-bottom: 9px;
+    }
+
+    .edit-description {
+        color: #888891;
+        margin-bottom: 28px;
+    }
+
+    .edit-form p {
+        margin-bottom: 20px;
+    }
+
+    .edit-form label {
+        display: block;
+        color: #55555e;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 9px;
+    }
+
+    .edit-form input {
+        width: 100%;
+        padding: 14px 15px;
+        border: 1px solid #e9e9ec;
+        border-radius: 12px;
+        outline: none;
+        font: inherit;
+        transition: .2s;
+    }
+
+    .edit-form input:focus {
+        border-color: #ff8052;
+        box-shadow: 0 0 0 3px rgba(255, 112, 65, .1);
+    }
+
+    .edit-errors {
+        color: #e04444;
+        font-size: 12px;
+        margin-top: 7px;
+    }
+
+    .edit-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .save-button {
+        flex: 1;
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        background: linear-gradient(120deg, #ff8a42, #f04438, #ed354d);
+        color: white;
+        font-weight: 800;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .save-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(240, 68, 56, .2);
+    }
+
+    .cancel-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 20px;
+        border: 1px solid #eeeeef;
+        border-radius: 12px;
+        color: #55555e;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    @media (max-width: 480px) {
+        .edit-card {
+            padding: 22px;
+        }
+
+        .edit-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="edit-wrapper">
+
+    <div class="edit-card">
+
+        <h1>Редактировать ссылку</h1>
+
+        <p class="edit-description">
+            Измени название или адрес своего перехода.
+        </p>
+
+        <form method="POST" class="edit-form">
+
+            {% csrf_token %}
+
+            <div>
+                <label for="{{ form.title.id_for_label }}">
+                    Название ссылки
+                </label>
+
+                {{ form.title }}
+
+                {% for error in form.title.errors %}
+                    <div class="edit-errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div>
+                <label for="{{ form.original_url.id_for_label }}">
+                    Адрес сайта
+                </label>
+
+                {{ form.original_url }}
+
+                {% for error in form.original_url.errors %}
+                    <div class="edit-errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            {% for error in form.non_field_errors %}
+                <div class="edit-errors">{{ error }}</div>
+            {% endfor %}
+
+            <div class="edit-actions">
+
+                <button type="submit" class="save-button">
+                    Сохранить изменения
+                </button>
+
+                <a href="{% url 'home' %}" class="cancel-button">
+                    Отмена
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,534 +1,670 @@
 
 {% extends 'base.html' %}
 
-{% block title %}Ainks — сокращай ссылки{% endblock %}
+{% block title %}Мои ссылки — Ainks{% endblock %}
 
-{% block extra_head %}
+{% block content %}
+
 <style>
-    .hero {
-        text-align: center;
-        padding: 35px 0 55px;
-        position: relative;
+    .dashboard {
+        padding: 15px 0 50px;
     }
 
-    .hero-label {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 9px 15px;
-        border: 1px solid #ffe1d5;
-        border-radius: 50px;
-        background: rgba(255,255,255,.8);
-        color: #ef6847;
-        font-size: 12px;
-        font-weight: 800;
+    .dashboard-heading {
+        margin-bottom: 30px;
+    }
+
+    .dashboard-heading h1 {
+        font-size: 32px;
+        color: #202027;
+        margin-bottom: 8px;
+    }
+
+    .dashboard-heading p {
+        color: #888891;
+    }
+
+    .section-card {
+        background: #fff;
+        border: 1px solid #eeeeef;
+        border-radius: 20px;
+        padding: 25px;
         margin-bottom: 25px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, .025);
     }
 
-    .hero-label span {
-        width: 7px;
-        height: 7px;
-        background: #ff7144;
-        border-radius: 50%;
-        box-shadow: 0 0 10px #ff7144;
-    }
-
-    .hero h1 {
-        font-family: 'Manrope', sans-serif;
-        font-size: clamp(38px, 6vw, 66px);
-        line-height: 1.12;
-        letter-spacing: -3px;
+    .section-title {
+        font-size: 19px;
         font-weight: 800;
-        max-width: 750px;
-        margin: 0 auto 20px;
+        margin-bottom: 20px;
+        color: #25252d;
     }
 
-    .hero h1 span {
-        background: var(--gradient);
-        color: transparent;
-        background-clip: text;
-        -webkit-background-clip: text;
+    .create-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
     }
 
-    .hero p {
-        max-width: 510px;
-        margin: auto;
-        color: #85858e;
-        font-size: 15px;
-        line-height: 1.8;
+    .create-form p {
+        margin: 0;
     }
 
-    .create-card {
-        max-width: 720px;
-        margin: 0 auto 65px;
-        position: relative;
+    .create-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #55555e;
     }
 
-    .create-card::before {
-        content: "";
-        position: absolute;
-        z-index: -1;
-        inset: 15px 35px -10px;
-        background: linear-gradient(120deg, #ff9a64, #ff4d55);
-        filter: blur(50px);
-        opacity: .14;
-        border-radius: 50%;
+    .create-form input {
+        width: 100%;
+        min-width: 0;
+        padding: 13px 15px;
+        border: 1px solid #e9e9ec;
+        border-radius: 12px;
+        outline: none;
+        font: inherit;
+        transition: .2s;
     }
 
-    .section-heading {
+    .create-form input:focus {
+        border-color: #ff8052;
+        box-shadow: 0 0 0 3px rgba(255, 112, 65, .1);
+    }
+
+    .main-button {
+        border: none;
+        padding: 14px 22px;
+        border-radius: 12px;
+        background: linear-gradient(120deg, #ff8a42, #f04438, #ed354d);
+        color: white;
+        font-weight: 800;
+        cursor: pointer;
+        transition: .25s;
+        box-shadow: 0 7px 20px rgba(240, 68, 56, .2);
+    }
+
+    .main-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(240, 68, 56, .3);
+    }
+
+    .management-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 22px;
-    }
-
-    .section-heading h2 {
-        font-family: 'Manrope', sans-serif;
-        font-size: 22px;
-        letter-spacing: -.7px;
-    }
-
-    .section-heading p {
-        color: #999;
-        font-size: 12px;
-        margin-top: 5px;
-    }
-
-    .create-card .primary-button {
-        width: 100%;
-        margin-top: 4px;
-    }
-
-    .preview {
-        display: none;
-        align-items: center;
-        gap: 13px;
-        padding: 14px;
-        margin: 18px 0;
-        background: #fff8f4;
-        border: 1px solid #ffe8de;
-        border-radius: 13px;
-    }
-
-    .preview-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 11px;
-        background: white;
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-    }
-
-    .preview-icon img {
-        width: 24px;
-        height: 24px;
-    }
-
-    .preview-info strong {
-        display: block;
-        font-size: 13px;
-    }
-
-    .preview-info span {
-        display: block;
-        color: #999;
-        font-size: 11px;
-        margin-top: 3px;
-    }
-
-    .links-section {
-        margin-top: 20px;
-    }
-
-    .links-section .section-heading {
+        gap: 15px;
+        flex-wrap: wrap;
         margin-bottom: 20px;
     }
 
-    .link-count {
-        padding: 7px 12px;
-        background: #fff0e9;
-        color: #ec6744;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 800;
+    .management-header h2 {
+        font-size: 21px;
+        margin: 0;
+        color: #25252d;
+    }
+
+    .management-count {
+        color: #9999a0;
+        font-size: 13px;
+    }
+
+    .filter-form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 22px;
+    }
+
+    .search-input,
+    .sort-select {
+        padding: 12px 14px;
+        border: 1px solid #e9e9ec;
+        border-radius: 11px;
+        background: #fff;
+        color: #333;
+        outline: none;
+        font: inherit;
+    }
+
+    .search-input {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .search-input:focus,
+    .sort-select:focus {
+        border-color: #ff8052;
+    }
+
+    .filter-button {
+        padding: 12px 18px;
+        border: none;
+        border-radius: 11px;
+        background: #25252d;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .reset-link {
+        display: flex;
+        align-items: center;
+        color: #f04438;
+        text-decoration: none;
+        font-size: 13px;
+        white-space: nowrap;
     }
 
     .link-list {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 13px;
     }
 
     .link-item {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 16px;
-        padding: 18px 20px;
-        background: white;
+        gap: 20px;
+        padding: 19px;
         border: 1px solid #eeeeef;
         border-radius: 16px;
         transition: .2s;
     }
 
     .link-item:hover {
-        border-color: #ffd0bf;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(30,30,40,.035);
+        border-color: #ffc0a9;
+        box-shadow: 0 8px 25px rgba(240, 68, 56, .06);
+    }
+
+    .link-main {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
     }
 
     .link-icon {
-        width: 43px;
-        height: 43px;
-        border-radius: 13px;
-        background: #fff4ee;
+        width: 45px;
+        height: 45px;
+        flex-shrink: 0;
         display: grid;
         place-items: center;
-        flex-shrink: 0;
+        background: #fff3ee;
+        border-radius: 13px;
         overflow: hidden;
     }
 
     .link-icon img {
-        width: 25px;
-        height: 25px;
+        width: 26px;
+        height: 26px;
+        object-fit: contain;
     }
 
-    .link-details {
-        flex: 1;
+    .link-info {
         min-width: 0;
     }
 
-    .link-details h3 {
-        font-size: 14px;
+    .link-title {
+        font-size: 15px;
         font-weight: 800;
+        color: #25252d;
         margin-bottom: 5px;
+        overflow-wrap: anywhere;
     }
 
     .link-original {
-        color: #999;
+        color: #9999a0;
         font-size: 12px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        max-width: 400px;
+        overflow-wrap: anywhere;
     }
 
-    .link-short {
+    .short-url {
         display: inline-block;
         margin-top: 7px;
-        color: #f05b42;
-        font-size: 12px;
-        font-weight: 800;
+        color: #f04438;
+        font-size: 13px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .link-right {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        justify-content: flex-end;
     }
 
     .link-stats {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        color: #999;
+        color: #888891;
         font-size: 12px;
+        margin-right: 5px;
         white-space: nowrap;
     }
 
-    .delete-form {
-        margin-left: 5px;
-    }
-
-    .delete-button {
-        width: 34px;
-        height: 34px;
-        border: 1px solid #f0eeee;
-        border-radius: 10px;
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 12px;
+        border-radius: 9px;
+        border: 1px solid #eeeeef;
         background: white;
-        color: #aaa;
+        color: #55555e;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
         cursor: pointer;
         transition: .2s;
     }
 
+    .action-button:hover {
+        border-color: #ffad91;
+        color: #f04438;
+    }
+
+    .copy-button {
+        background: #fff3ee;
+        color: #f04438;
+        border-color: #ffe0d4;
+    }
+
     .delete-button:hover {
-        background: #fff0ed;
-        color: #e44d40;
-        border-color: #ffd2ca;
+        color: #e04444;
+        border-color: #e04444;
+    }
+
+    .qr-details {
+        position: relative;
+    }
+
+    .qr-details summary {
+        list-style: none;
+    }
+
+    .qr-details summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .qr-popup {
+        position: absolute;
+        z-index: 10;
+        right: 0;
+        top: 42px;
+        width: 210px;
+        padding: 15px;
+        background: white;
+        border: 1px solid #eeeeef;
+        border-radius: 15px;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, .12);
+        text-align: center;
+    }
+
+    .qr-popup img {
+        width: 160px;
+        height: 160px;
+        display: block;
+        margin: 0 auto 10px;
+    }
+
+    .qr-popup p {
+        color: #888891;
+        font-size: 11px;
+        margin: 0;
     }
 
     .empty-state {
-        padding: 55px 20px;
         text-align: center;
-        background: white;
-        border: 1px dashed #e8e8eb;
-        border-radius: 18px;
+        padding: 45px 20px;
+        border: 1px dashed #e5e5e8;
+        border-radius: 15px;
+        color: #888891;
     }
 
-    .empty-icon {
-        font-size: 35px;
-        margin-bottom: 15px;
+    .empty-state strong {
+        display: block;
+        color: #33333b;
+        font-size: 16px;
+        margin-bottom: 7px;
     }
 
-    .empty-state h3 {
-        font-size: 17px;
-        margin-bottom: 8px;
+    .form-errors {
+        color: #e04444;
+        font-size: 12px;
+        margin-top: 5px;
     }
 
-    .empty-state p {
-        color: #999;
-        font-size: 13px;
-    }
-
-    .guest-card {
-        max-width: 650px;
-        margin: 0 auto;
-        text-align: center;
-    }
-
-    .guest-card h2 {
-        font-size: 23px;
-        margin-bottom: 12px;
-    }
-
-    .guest-card p {
-        color: #888;
-        line-height: 1.7;
-        font-size: 14px;
-        margin-bottom: 23px;
-    }
-
-    .guest-actions {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    @media(max-width: 650px) {
-        .hero {
-            padding-top: 15px;
+    @media (max-width: 850px) {
+        .create-form {
+            grid-template-columns: 1fr 1fr;
         }
 
-        .hero h1 {
-            letter-spacing: -1.7px;
+        .create-form button {
+            grid-column: 1 / -1;
         }
 
         .link-item {
-            gap: 10px;
-            padding: 14px;
+            align-items: flex-start;
+            flex-direction: column;
         }
 
-        .link-stats {
-            display: none;
+        .link-right {
+            width: 100%;
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 560px) {
+        .section-card {
+            padding: 17px;
         }
 
-        .link-original {
-            max-width: 180px;
+        .dashboard-heading h1 {
+            font-size: 26px;
+        }
+
+        .create-form {
+            grid-template-columns: 1fr;
+        }
+
+        .create-form button {
+            grid-column: auto;
+        }
+
+        .filter-form {
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex-basis: 100%;
+        }
+
+        .sort-select {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .link-item {
+            padding: 15px;
+        }
+
+        .link-right {
+            gap: 7px;
+        }
+
+        .action-button {
+            padding: 8px 10px;
         }
     }
 </style>
-{% endblock %}
 
-{% block content %}
+<div class="dashboard">
 
-<section class="hero">
-    <div class="hero-label">
-        <span></span>
-        ТВОЙ ПРОСТРАНСТВО ДЛЯ ССЫЛОК
+    <div class="dashboard-heading">
+        <h1>Мои ссылки</h1>
+        <p>Создавай, редактируй и управляй своими короткими ссылками.</p>
     </div>
 
-    <h1>
-        Длинные ссылки.<br>
-        <span>Короткие решения.</span>
-    </h1>
+    <!-- Создание ссылки -->
 
-    <p>
-        Превращай длинные адреса в короткие ссылки.
-        Создавай, сохраняй и управляй ими в одном месте.
-    </p>
-</section>
+    <section class="section-card">
 
-{% if user.is_authenticated %}
+        <h2 class="section-title">Создать короткую ссылку</h2>
 
-<section class="card create-card">
+        <form method="POST" class="create-form">
+            {% csrf_token %}
 
-    <div class="section-heading">
-        <div>
-            <h2>Создать ссылку</h2>
-            <p>Добавь адрес, и Ainks сделает его короче.</p>
-        </div>
-    </div>
+            <div>
+                <label for="{{ form.title.id_for_label }}">Название</label>
+                {{ form.title }}
 
-    <form method="POST">
-        {% csrf_token %}
-
-        <div class="form-group">
-            <label for="{{ form.title.id_for_label }}">Название ссылки</label>
-            {{ form.title }}
-            {{ form.title.errors }}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ form.original_url.id_for_label }}">Исходный адрес</label>
-            {{ form.original_url }}
-            {{ form.original_url.errors }}
-        </div>
-
-        <div class="preview" id="preview">
-            <div class="preview-icon">
-                <img id="favicon" src="" alt="">
+                {% for error in form.title.errors %}
+                    <div class="form-errors">{{ error }}</div>
+                {% endfor %}
             </div>
-            <div class="preview-info">
-                <strong id="site-name">Сайт</strong>
-                <span id="site-domain"></span>
+
+            <div>
+                <label for="{{ form.original_url.id_for_label }}">Адрес сайта</label>
+                {{ form.original_url }}
+
+                {% for error in form.original_url.errors %}
+                    <div class="form-errors">{{ error }}</div>
+                {% endfor %}
             </div>
+
+            <button type="submit" class="main-button">
+                + Создать ссылку
+            </button>
+
+        </form>
+
+        {% for error in form.non_field_errors %}
+            <div class="form-errors">{{ error }}</div>
+        {% endfor %}
+
+    </section>
+
+    <!-- Управление ссылками -->
+
+    <section class="section-card">
+
+        <div class="management-header">
+            <h2>Все ссылки</h2>
+
+            <span class="management-count">
+                Найдено: {{ links|length }}
+            </span>
         </div>
 
-        <button type="submit" class="primary-button">
-            ✦ Создать короткую ссылку
-        </button>
-    </form>
-</section>
+        <!-- Поиск и сортировка -->
 
-<section class="links-section">
+        <form method="GET" class="filter-form">
 
-    <div class="section-heading">
-        <div>
-            <h2>Мои ссылки</h2>
-            <p>Все созданные тобой ссылки.</p>
-        </div>
+            <input
+                type="text"
+                name="q"
+                class="search-input"
+                placeholder="Поиск по названию или адресу..."
+                value="{{ search_query }}"
+            >
 
-        <span class="link-count">{{ links|length }} ссылок</span>
-    </div>
+            <select name="sort" class="sort-select">
+                <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>
+                    Сначала новые
+                </option>
 
-    {% if links %}
+                <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>
+                    Сначала старые
+                </option>
+
+                <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>
+                    Самые популярные
+                </option>
+
+                <option value="least_popular" {% if current_sort == 'least_popular' %}selected{% endif %}>
+                    Наименее популярные
+                </option>
+            </select>
+
+            <button type="submit" class="filter-button">
+                Найти
+            </button>
+
+            {% if search_query %}
+                <a href="{% url 'home' %}?sort={{ current_sort }}" class="reset-link">
+                    Сбросить
+                </a>
+            {% endif %}
+
+        </form>
+
+        <!-- Список ссылок -->
+
         <div class="link-list">
 
             {% for link in links %}
-                <article class="link-item">
 
-                    <div class="link-icon">
-                        <img
-                            src="{{ link.favicon_url }}"
-                            alt=""
-                            onerror="this.style.display='none'"
-                        >
-                    </div>
+                <div class="link-item">
 
-                    <div class="link-details">
-                        <h3>{{ link.title }}</h3>
+                    <div class="link-main">
 
-                        <div class="link-original">
-                            {{ link.original_url }}
+                        <div class="link-icon">
+                            {% if link.favicon_url %}
+                                <img
+                                    src="{{ link.favicon_url }}"
+                                    alt=""
+                                    onerror="this.style.display='none'; this.parentElement.innerHTML='🌐';"
+                                >
+                            {% else %}
+                                🌐
+                            {% endif %}
                         </div>
 
-                        <a
-                            href="{% url 'short_redirect' link.short_code %}"
-                            class="link-short"
-                            target="_blank"
-                        >
-                            {{ request.get_host }}/{{
-                                link.short_code
-                            }}
-                        </a>
+                        <div class="link-info">
+
+                            <div class="link-title">
+                                {{ link.title }}
+                            </div>
+
+                            <div class="link-original">
+                                {{ link.original_url }}
+                            </div>
+
+                            <a
+                                href="{{ link.short_url }}"
+                                target="_blank"
+                                class="short-url"
+                            >
+                                {{ link.short_url }}
+                            </a>
+
+                        </div>
+
                     </div>
 
-                    <div class="link-stats">
-                        ↗ {{ link.clicks }} переходов
-                    </div>
+                    <div class="link-right">
 
-                    <form
-                        method="POST"
-                        action="{% url 'delete_link' link.id %}"
-                        class="delete-form"
-                    >
-                        {% csrf_token %}
+                        <span class="link-stats">
+                            {{ link.clicks }} переходов
+                        </span>
+
+                        <!-- Копирование -->
+
                         <button
-                            type="submit"
-                            class="delete-button"
-                            title="Удалить ссылку"
-                            onclick="return confirm('Удалить эту ссылку?')"
+                            type="button"
+                            class="action-button copy-button"
+                            data-url="{{ link.short_url }}"
+                            onclick="copyShortLink(this)"
                         >
-                            ✕
+                            Копировать
                         </button>
-                    </form>
 
-                </article>
+                        <!-- QR-код -->
+
+                        <details class="qr-details">
+
+                            <summary class="action-button">
+                                QR-код
+                            </summary>
+
+                            <div class="qr-popup">
+
+                                <img
+                                    src="{{ link.qr_url }}"
+                                    alt="QR-код ссылки {{ link.title }}"
+                                    loading="lazy"
+                                >
+
+                                <p>Отсканируй QR-код камерой телефона</p>
+
+                            </div>
+
+                        </details>
+
+                        <!-- Редактирование -->
+
+                        <a
+                            href="{% url 'edit_link' link.id %}"
+                            class="action-button"
+                        >
+                            Изменить
+                        </a>
+
+                        <!-- Удаление -->
+
+                        <form
+                            method="POST"
+                            action="{% url 'delete_link' link.id %}"
+                            onsubmit="return confirm('Ты действительно хочешь удалить эту ссылку? Это действие нельзя отменить.');"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="action-button delete-button"
+                            >
+                                Удалить
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty-state">
+
+                    {% if search_query %}
+
+                        <strong>Ничего не найдено</strong>
+                        Попробуй изменить поисковый запрос.
+
+                    {% else %}
+
+                        <strong>Пока нет ссылок</strong>
+                        Создай свою первую короткую ссылку выше.
+
+                    {% endif %}
+
+                </div>
+
             {% endfor %}
 
         </div>
 
-    {% else %}
+    </section>
 
-        <div class="empty-state">
-            <div class="empty-icon">↗</div>
-            <h3>Пока здесь пусто</h3>
-            <p>Создай свою первую короткую ссылку выше.</p>
-        </div>
+</div>
 
-    {% endif %}
-
-</section>
-
-{% else %}
-
-<section class="card guest-card">
-    <h2>Начни пользоваться Ainks</h2>
-    <p>
-        Создавай короткие ссылки, сохраняй их в личном кабинете
-        и следи за количеством переходов.
-    </p>
-
-    <div class="guest-actions">
-        <a href="{% url 'register' %}" class="primary-button">
-            Создать аккаунт
-        </a>
-
-        <a href="{% url 'login' %}" class="secondary-button">
-            Уже есть аккаунт?
-        </a>
-    </div>
-</section>
-
-{% endif %}
-
-{% endblock %}
-
-{% block scripts %}
 <script>
-    const urlInput = document.querySelector(
-        'input[name="original_url"]'
-    );
+    async function copyShortLink(button) {
+        const url = button.dataset.url;
+        const originalText = button.textContent;
 
-    const preview = document.getElementById('preview');
-    const favicon = document.getElementById('favicon');
-    const siteName = document.getElementById('site-name');
-    const siteDomain = document.getElementById('site-domain');
+        try {
+            await navigator.clipboard.writeText(url);
 
-    if (urlInput) {
-        urlInput.addEventListener('input', function () {
-            let value = this.value.trim();
+            button.textContent = 'Скопировано!';
+            button.style.background = '#e9f9ed';
+            button.style.color = '#218b45';
 
-            try {
-                if (!/^https?:\/\//i.test(value)) {
-                    value = 'https://' + value;
-                }
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = '';
+                button.style.color = '';
+            }, 1800);
 
-                const parsed = new URL(value);
-
-                if (!['http:', 'https:'].includes(parsed.protocol)) {
-                    preview.style.display = 'none';
-                    return;
-                }
-
-                preview.style.display = 'flex';
-                siteName.textContent = parsed.hostname;
-                siteDomain.textContent = parsed.href;
-
-                favicon.src =
-                    'https://www.google.com/s2/favicons?domain=' +
-                    encodeURIComponent(parsed.hostname) +
-                    '&sz=64';
-
-            } catch (error) {
-                preview.style.display = 'none';
-            }
-        });
+        } catch (error) {
+            window.prompt('Скопируй короткую ссылку:', url);
+        }
     }
 </script>
+
 {% endblock %}
